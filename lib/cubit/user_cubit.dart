@@ -5,7 +5,9 @@ import 'package:happy_tech_mastering_api_with_flutter/core/api/api_consumer.dart
 import 'package:happy_tech_mastering_api_with_flutter/core/api/end_points.dart';
 import 'package:happy_tech_mastering_api_with_flutter/core/errors/exceptions.dart';
 import 'package:happy_tech_mastering_api_with_flutter/cubit/user_state.dart';
+import 'package:happy_tech_mastering_api_with_flutter/functions/upload_img_to_api.dart';
 import 'package:happy_tech_mastering_api_with_flutter/models/sign_in_model.dart';
+import 'package:happy_tech_mastering_api_with_flutter/models/sign_up_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,6 +40,7 @@ class UserCubit extends Cubit<UserState> {
   SignInModel? userResponseModel;
 
 
+
   signIn() async {
  try{
    emit(LoadingState());
@@ -65,4 +68,37 @@ class UserCubit extends Cubit<UserState> {
 
 
   }
+  
+  signUp() async {
+  try{
+    emit(LoadingState());
+    final response=await api.post(EndPoints.signUp,isFormData: true,data: {
+
+      ApiKey.name:signUpName.text,
+      ApiKey.email:signUpEmail.text,
+      ApiKey.phone :signUpPhoneNumber.text,
+      ApiKey.password:signUpPassword.text,
+      ApiKey.confirmPassword:confirmPassword.text,
+      ApiKey.location:'{"name":"methalfa","address":"meet halfa","coordinates":[30.1572709,31.224779]}',
+      ApiKey.profilePic:await uploadImageToApi(profilePic!)
+    });
+    final signUpModel=SignUpModel.fromJson(response);
+
+    emit(SignUpSuccessState(message: signUpModel.message));
+  }
+   on ServerException catch(e)
+    {
+      emit(SignUpFailureState(errorMessage: e.errMod.errorMessage));
+
+
+    }
+  }
+
+  uploadProfilePic(XFile image)
+  {
+    profilePic=image;
+    emit(UploadProfilePicState());
+  }
+
+  
 }
