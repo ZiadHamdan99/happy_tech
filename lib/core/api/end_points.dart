@@ -18,6 +18,7 @@ class ApiKey
   static String email="email";
   static String password="password";
   static String token="token";
+  static String message="message";
   static String id="id";
 
 

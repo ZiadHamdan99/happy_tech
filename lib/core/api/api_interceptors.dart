@@ -4,7 +4,7 @@ class ApiInterceptors extends Interceptor
 {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    options.headers["lang"]="ar";
+    options.headers["Accepted-Language"]="en";
     super.onRequest(options, handler);
   }
 
