@@ -11,7 +11,7 @@ class UserModel
   UserModel({required this.profilePic, required this.name, required this.phone, required this.email, required this.location});
 
 
-  factory UserModel.fromJsom(Map<String,dynamic>jsonData)
+  factory UserModel.fromJson(Map<String,dynamic>jsonData)
   {
     return UserModel(
         profilePic: jsonData["user"][ApiKey.profilePic],

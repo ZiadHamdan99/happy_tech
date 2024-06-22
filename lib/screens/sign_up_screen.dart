@@ -10,7 +10,7 @@ import 'package:happy_tech_mastering_api_with_flutter/widgets/page_heading.dart'
 import 'package:happy_tech_mastering_api_with_flutter/widgets/pick_image_widget.dart';
 
 class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,11 +79,11 @@ class SignUpScreen extends StatelessWidget {
                   isDense: true,
                   obscureText: true,
                   suffixIcon: true,
-                  controller: context.read<UserCubit>().confirmPassword,
+                  controller: context.read<UserCubit>().signUpConfirmPassword
                 ),
                 const SizedBox(height: 22),
                 //!Sign Up Button
-               state is LoadingState? CircularProgressIndicator(): CustomFormButton(
+               state is LoadingState? const CircularProgressIndicator(): CustomFormButton(
                   innerText: 'Signup',
                   onPressed: () {
                     context.read<UserCubit>().signUp();

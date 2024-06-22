@@ -1,6 +1,6 @@
 class PagesNames
 {
-  static const profilePage="/ProfileScreen";
+  static const profilePage="ProfileScreen";
 
 
 

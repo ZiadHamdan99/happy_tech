@@ -11,7 +11,7 @@ import 'package:happy_tech_mastering_api_with_flutter/widgets/page_header.dart';
 import 'package:happy_tech_mastering_api_with_flutter/widgets/page_heading.dart';
 
 class SignInScreen extends StatelessWidget {
-  const SignInScreen({Key? key}) : super(key: key);
+  const SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class SignInScreen extends StatelessWidget {
       child: BlocConsumer<UserCubit, UserState>(
         listener: ( context,  state) {
           if(state is SignInSuccessState){
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Success!")));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Success!")));
 
             context.read<UserCubit>().getUserData();
             Navigator.of(context).pushNamed(PagesNames.profilePage);

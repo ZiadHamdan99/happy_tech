@@ -1,20 +1,14 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:happy_tech_mastering_api_with_flutter/cache/cache_helper.dart';
-import 'package:happy_tech_mastering_api_with_flutter/core/api/api_consumer.dart';
-import 'package:happy_tech_mastering_api_with_flutter/core/api/end_points.dart';
-import 'package:happy_tech_mastering_api_with_flutter/core/errors/exceptions.dart';
 import 'package:happy_tech_mastering_api_with_flutter/cubit/user_state.dart';
-import 'package:happy_tech_mastering_api_with_flutter/functions/upload_img_to_api.dart';
 import 'package:happy_tech_mastering_api_with_flutter/models/sign_in_model.dart';
-import 'package:happy_tech_mastering_api_with_flutter/models/sign_up_model.dart';
-import 'package:happy_tech_mastering_api_with_flutter/models/user_model.dart';
+import 'package:happy_tech_mastering_api_with_flutter/repositories/user_repo.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 class UserCubit extends Cubit<UserState> {
-  UserCubit(this.api) : super(UserInitial());
-  final ApiConsumer api ;
+  UserCubit(this.userRepo) : super(UserInitial());
+  final UserRepo userRepo ;
 
   //Sign in Form key
   GlobalKey<FormState> signInFormKey = GlobalKey();
@@ -35,63 +29,42 @@ class UserCubit extends Cubit<UserState> {
   //Sign up password
   TextEditingController signUpPassword = TextEditingController();
   //Sign up confirm password
-  TextEditingController confirmPassword = TextEditingController();
+  TextEditingController signUpConfirmPassword = TextEditingController();
 
   SignInModel? userResponseModel;
 
 
 
-  signIn() async {
- try{
-   emit(LoadingState());
-   final response = await api.post(EndPoints.signIn,
-       data: {
-         ApiKey.email:signInEmail.text,
-         ApiKey.password:signInPassword.text
-       });
+  signUp() async {
+    emit(LoadingState());
+   final response= await userRepo.signUp(
+        name: signUpName.text,
+        email: signUpEmail.text,
+        phone: signUpPhoneNumber.text,
+        password: signUpPassword.text,
+        confirmPassword: signUpConfirmPassword.text,
+        profilePic: profilePic!);
 
-   userResponseModel=SignInModel.fromJson(response);
+   final signUpModel=response.$1;
+   final errorMessage= response.$2;
 
-   final decodedToken = JwtDecoder.decode(userResponseModel!.token);
-
-   prefs.setString(ApiKey.token, userResponseModel!.token);
-
-   prefs.setString(ApiKey.id, decodedToken[ApiKey.id]);
-   print(decodedToken["id"]);
-
-   emit(SignInSuccessState());
- } on ServerException catch(e)
-    {
-      emit(SignInFailureState(errorMessage: e.errMod.errorMessage));
-
-    }
-
+   if(signUpModel!=null)emit(SignUpSuccessState(message: signUpModel.message));
+   if(errorMessage!=null)emit(SignUpFailureState(errorMessage:errorMessage ));
 
   }
   
-  signUp() async {
-  try{
+  signIn() async {
     emit(LoadingState());
-    final response=await api.post(EndPoints.signUp,isFormData: true,data: {
+    final response=await userRepo.signIn(
+        email: signInEmail.text,
+        password: signInPassword.text);
 
-      ApiKey.name:signUpName.text,
-      ApiKey.email:signUpEmail.text,
-      ApiKey.phone :signUpPhoneNumber.text,
-      ApiKey.password:signUpPassword.text,
-      ApiKey.confirmPassword:confirmPassword.text,
-      ApiKey.location:'{"name":"methalfa","address":"meet halfa","coordinates":[30.1572709,31.224779]}',
-      ApiKey.profilePic:await uploadImageToApi(profilePic!)
-    });
-    final signUpModel=SignUpModel.fromJson(response);
-
-    emit(SignUpSuccessState(message: signUpModel.message));
-  }
-   on ServerException catch(e)
-    {
-      emit(SignUpFailureState(errorMessage: e.errMod.errorMessage));
+    final signInModel=response.$1;
+    final errorMessage=response.$2;
+    if(signInModel!=null)emit(SignInSuccessState());
+    if(errorMessage!=null)emit(SignInFailureState(errorMessage:errorMessage ));
 
 
-    }
   }
 
   uploadProfilePic(XFile image)
@@ -102,14 +75,53 @@ class UserCubit extends Cubit<UserState> {
 
   getUserData() async
   {
-    try{
-      emit(LoadingState());
-      final response = await api.get(EndPoints.getUserDataEndPoint(prefs.getString(ApiKey.id)),);
-      emit(GetUserSuccessState(userModel: UserModel.fromJsom(response)));
-    } on ServerException catch(e)
-    {
-      emit(GetUserFailureState(errorMessage: e.errMod.errorMessage));
-    }
+    emit(LoadingState());
+final response=await userRepo.getUserData();
+    final userModel=response.$1;
+    final errorMessage=response.$2;
+    if(userModel!=null)emit(GetUserSuccessState(userModel: userModel));
+    if(errorMessage!=null)emit(GetUserFailureState(errorMessage:errorMessage ));
+
+
+
+  }
+
+  // deleteUser()async{
+  //   try {
+  //     emit(LoadingState());
+  //     final response = await api.delete(EndPoints.deleteUser,
+  //         isFormData: true,
+  //         queryParameters: {
+  //           " id": prefs.getString(ApiKey.id)
+  //         });
+  //     final deleteModel = DeleteModel.fromJson(response);
+  //     if (deleteModel.message != null && deleteModel.error == null &&
+  //         deleteModel.status == null && deleteModel.errorMessage == null) {
+  //       emit(DeleteSuccessState(message: deleteModel.message!));
+  //
+  //     } else if (deleteModel.error != null ) {
+  //       emit(DeleteFailureState(
+  //           errorMessage: deleteModel.errorMessage,
+  //           status: deleteModel.status!,
+  //           error: deleteModel.error));
+  //
+  //
+  //     } else if (deleteModel.status != null && deleteModel.error != null) {
+  //       emit(DeleteInvalidState(errorMessage: deleteModel.errorMessage!));
+  //     } else {
+  //       emit(DeleteFailureState(errorMessage: 'Unknown error occurred', status: deleteModel.status!, error: deleteModel.error!,));
+  //     }
+  //   }
+  //       on ServerException catch(e)
+  //
+  //   {
+  //     emit(DeleteFailureState(errorMessage: e.errMod.errorMessage));
+  //
+  //   }
+  // }
+  
+  editUserData()
+  async {
 
   }
 

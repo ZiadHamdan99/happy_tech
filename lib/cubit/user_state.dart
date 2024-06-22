@@ -1,4 +1,5 @@
- import 'package:happy_tech_mastering_api_with_flutter/models/user_model.dart';
+ import 'package:happy_tech_mastering_api_with_flutter/models/patch_model.dart';
+import 'package:happy_tech_mastering_api_with_flutter/models/user_model.dart';
 
 class UserState {}
 
@@ -38,7 +39,50 @@ class UserState {}
  }
 
 
+ final class PatchFailureState extends UserState {
+  final String errorMessage;
+  PatchFailureState({required this.errorMessage});
+ }
+
+
+
+
+ final class PatchSuccessState extends UserState {
+  final String message;
+
+  PatchSuccessState({required this.message});
+ }
+
+
+
+
  final class GetUserFailureState extends UserState {
   final String errorMessage;
   GetUserFailureState({required this.errorMessage});
+ }
+
+
+
+
+ class DeleteSuccessState extends UserState {
+  final String message;
+
+  DeleteSuccessState({required this.message});
+ }
+
+ class DeleteFailureState extends UserState {
+ final int status;
+  final String? errorMessage;
+  final String? error;
+
+  DeleteFailureState({required this.status, required this.errorMessage, required this.error});
+
+
+ }
+
+ class DeleteInvalidState extends UserState {
+
+  final String errorMessage;
+
+  DeleteInvalidState({required this.errorMessage});
  }
