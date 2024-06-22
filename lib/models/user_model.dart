@@ -1,4 +1,5 @@
 import 'package:happy_tech_mastering_api_with_flutter/core/api/end_points.dart';
+import 'package:happy_tech_mastering_api_with_flutter/models/location_model.dart';
 
 class UserModel
 {
@@ -6,7 +7,7 @@ class UserModel
   final String name;
   final String phone;
   final String email;
-  final Map<String,dynamic> location;
+  final LocationModel? location;
 
   UserModel({required this.profilePic, required this.name, required this.phone, required this.email, required this.location});
 
@@ -18,7 +19,9 @@ class UserModel
         name: jsonData["user"][ApiKey.name],
         phone: jsonData["user"][ApiKey.phone],
         email:jsonData["user"][ApiKey.email] ,
-        location: jsonData["user"][ApiKey.location]);
+      location: jsonData["user"][ApiKey.location] != null
+          ? LocationModel.fromJson(jsonData["user"][ApiKey.location])
+          : null,);
   }
 
 }

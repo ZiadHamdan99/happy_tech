@@ -52,7 +52,7 @@ class ProfileScreen extends StatelessWidget {
 
               //! Address
                ListTile(
-                title: Text(state.userModel.location["type"]),
+                title: Text(state.userModel.location?.name ?? 'No location'),
                 leading: const Icon(Icons.location_city),
               ),
               const SizedBox(height: 16),
