@@ -6,7 +6,6 @@ import 'package:page_transition/page_transition.dart';
 onGenerateRoute(settings)
 {
 
-  final args=settings.arguments ==null ? [] : settings.arguments as List<dynamic>;
   switch(settings.name)
   {
     case PagesNames.profilePage:
