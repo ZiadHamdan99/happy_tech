@@ -7,6 +7,9 @@ class EndPoints
   static String updateUser="user/update";
   static String deleteUser="user/delete?id=64a1fa760db6e1f0ad3c52e6";
   static String getUserData="user/get-user/64a1fc7dc5b2fe879468c637";
+  static String getUserDataEndPoint(id){
+    return "user/get-user/$id";
+  }
   static String logOut="user/logout";
 
 }

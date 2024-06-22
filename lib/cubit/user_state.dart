@@ -1,4 +1,6 @@
- class UserState {}
+ import 'package:happy_tech_mastering_api_with_flutter/models/user_model.dart';
+
+class UserState {}
 
  final class UserInitial extends UserState {}
 
@@ -15,7 +17,7 @@
 
 
  final class SignUpSuccessState extends UserState {
- final String message;
+  final String message;
 
   SignUpSuccessState({required this.message});
  }
@@ -24,4 +26,19 @@
  final class SignUpFailureState extends UserState {
   final String errorMessage;
   SignUpFailureState({required this.errorMessage});
+ }
+
+
+
+
+ final class GetUserSuccessState extends UserState {
+  final UserModel userModel;
+
+  GetUserSuccessState({required this.userModel});
+ }
+
+
+ final class GetUserFailureState extends UserState {
+  final String errorMessage;
+  GetUserFailureState({required this.errorMessage});
  }

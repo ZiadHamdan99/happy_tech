@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:happy_tech_mastering_api_with_flutter/cubit/user_cubit.dart';
 import 'package:happy_tech_mastering_api_with_flutter/cubit/user_state.dart';
 import 'package:happy_tech_mastering_api_with_flutter/screens/profile_screen.dart';
+import 'package:happy_tech_mastering_api_with_flutter/utilities/pages_names.dart';
 import 'package:happy_tech_mastering_api_with_flutter/widgets/custom_form_button.dart';
 import 'package:happy_tech_mastering_api_with_flutter/widgets/custom_input_field.dart';
 import 'package:happy_tech_mastering_api_with_flutter/widgets/dont_have_an_account.dart';
@@ -21,6 +22,10 @@ class SignInScreen extends StatelessWidget {
         listener: ( context,  state) {
           if(state is SignInSuccessState){
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Success!")));
+
+            context.read<UserCubit>().getUserData();
+            Navigator.of(context).pushNamed(PagesNames.profilePage);
+            // Navigator.of(context).push(MaterialPageRoute(builder:(context)=>ProfileScreen() ));
           }
           else if(state is SignInFailureState)
             {
@@ -73,12 +78,7 @@ class SignInScreen extends StatelessWidget {
                                     innerText: 'Sign In',
                                     onPressed: () {
                                       context.read<UserCubit>().signIn();
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) => const ProfileScreen(),
-                                      //   ),
-                                      // );
+
                                     },
                                   ),
                                   const SizedBox(height: 18),
